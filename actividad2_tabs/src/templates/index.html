@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</head>
+<body>
+    <h1 class="text-center mt-5 mb-5 text-primary">SISTEMA GESTIÓN INVENTARIO</h1>
+
+    <div class="container">
+        <!-- Navegación con pestañas en la parte superior -->
+        <ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="empresa-tab" data-bs-toggle="tab" data-bs-target="#empresa" type="button" role="tab" aria-controls="empresa" aria-selected="true">Empresa</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="inventario-tab" data-bs-toggle="tab" data-bs-target="#inventario" type="button" role="tab" aria-controls="inventario" aria-selected="false">Inventario</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="producto-tab" data-bs-toggle="tab" data-bs-target="#producto" type="button" role="tab" aria-controls="producto" aria-selected="false">Productos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="proveedor-tab" data-bs-toggle="tab" data-bs-target="#proveedor" type="button" role="tab" aria-controls="proveedor" aria-selected="false">Proveedores</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pedido-tab" data-bs-toggle="tab" data-bs-target="#pedido" type="button" role="tab" aria-controls="producto" aria-selected="false">Pedidos</button>
+            </li>
+        </ul>
+
+        <!-- Contenido de las pestañas -->
+        <div class="tab-content" id="myTabContent">
+            <!-- Pestaña EMPRESA -->
+            <div class="tab-pane fade show active" id="empresa" role="tabpanel" aria-labelledby="empresa-tab">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form action="/empresa" method="POST">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label>Nombre</label>
+                                    <input type="text" class="form-control mb-3" name="nombre">
+                                </div>
+                                <div class="col">
+                                    <label>Dirección</label>
+                                    <input type="text" class="form-control mb-3" name="direccion">
+                                </div>
+                                <div class="col">
+                                    <label>CIF</label>
+                                    <input type="text" class="form-control mb-3" name="cif">
+                                </div>
+                                <div class="col">
+                                    <label>Email</label>
+                                    <input type="text" class="form-control mb-3" name="email">
+                                </div>
+                                <div class="col">
+                                    <label>Teléfono</label>
+                                    <input type="text" class="form-control mb-3" name="telefono">
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-primary mb-3 mt-4" type="submit">Guardar</button>  
+                                </div>
+                            </div>
+                        </form>
+        
+                        <!-- Tabla-->
+                        <table class="table table-bordered">
+                            <thead>
+                                <th scope = "col">#</th>
+                                <th scope = "col">Nombre</th>
+                                <th scope = "col">Dirección</th>
+                                <th scope = "col">CIF</th>
+                                <th scope = "col">Email</th>
+                                <th scope = "col">Teléfono</th>
+                                <th scope = "col">Edit</th>
+                                <th scope = "col">Delete</th>
+                            </thead>
+                       
+                            <tbody>
+                                {% for d in empresaData %}
+                                    <tr>
+                                        <td>{{d.id_empresa}}</td>
+                                        <td>{{d.nombre}}</td>
+                                        <td>{{d.direccion}}</td>
+                                        <td>{{d.cif}}</td>
+                                        <td>{{d.email}}</td>
+                                        <td>{{d.telefono}}</td>
+                                        <td><button class="btn btn-primary btn-sm" id="btn-edit{{d.id_empresa}}" data-bs-toggle = "modal" data-bs-target="#modal{{d.id_empresa}}">Editar</button></td>
+                                        <td><a href="{{url_for('delete', id=d.id_empresa)}}" class="btn btn-danger btn-sm">Eliminar</a></td>
+                                    </tr>
+        
+                                    <!-- Modal para editar empresa -->
+        
+                                    <div class="modal fade" id="modal{{d.id_empresa}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h1 class="modal-title fs-5" id="exampleModalLabel">{{d.nombre}}</h1>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                              <form action="/edit/{{d.id_empresa}}" method="post">
+                                                <label>Nombre</label>
+                                                <input type="text" class="form-control mb-3" name="nombre" value="{{d.nombre}}">
+                                                <label>Dirección</label>
+                                                <input type="text" class="form-control mb-3" name="direccion" value="{{d.direccion}}" >
+                                                <label>CIF</label>
+                                                <input type="text" class="form-control mb-3" name="cif" value="{{d.cif}}">
+                                                <label>Email</label>
+                                                <input type="text" class="form-control mb-3" name="email" value="{{d.email}}">
+                                                <label>Teléfono</label>
+                                                <input type="text" class="form-control mb-3" name="telefono" value="{{d.telefono}}">
+        
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                            </div>
+                                            </form>
+                                          </div>
+                                        </div>
+                                      </div>
+                                {% endfor %}                        
+                            </tbody>
+                        </table>
+                    </div>
+                </div>   
+            </div>
+            
+            <!-- Pestaña INVENTARIO -->
+            <div class="tab-pane fade" id="inventario" role="tabpanel" aria-labelledby="inventario-tab">
+                <!-- Aquí va el contenido CRUD para la tabla inventario -->
+            </div>
+            
+            <!-- Pestaña PRODUCTOS (contenido para la tabla producto) -->
+            <div class="tab-pane fade" id="producto" role="tabpanel" aria-labelledby="producto-tab">
+                <!-- Aquí va el contenido CRUD para la tabla producto -->
+            </div>
+
+             <!-- Pestaña PROVEEDORES-->
+             <div class="tab-pane fade" id="proveedor" role="tabpanel" aria-labelledby="proveedor-tab">
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            function construirContenidoProveedores(proveedoresData) {
+            let contenidoHtml = `
+                <div class="card shadow">
+                    <div class="card-body">
+                        <form id = "formAddProveedor" action="/proveedores" method="POST">
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <label>Nombre</label>
+                                    <input type="text" class="form-control mb-3" name="nombre">
+                                </div>
+                                <div class="col">
+                                    <label>CIF</label>
+                                    <input type="text" class="form-control mb-3" name="cif">
+                                </div>
+                                <div class="col">
+                                    <label>Dirección</label>
+                                    <input type="text" class="form-control mb-3" name="direccion">
+                                </div>
+                                <div class="col">
+                                    <label>Teléfono</label>
+                                    <input type="text" class="form-control mb-3" name="telefono">
+                                </div>
+                                <div class="col">
+                                    <label>Email</label>
+                                    <input type="text" class="form-control mb-3" name="email">
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-primary mb-3 mt-3" type="submit">Guardar</button>
+                                </div>
+                            </div>
+                        </form>`;
+
+            contenidoHtml += "<table class='table table-bordered'><thead><tr><th>#</th><th>Nombre</th><th>CIF</th><th>Dirección</th><th>Teléfono</th><th>Email</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody>";
+
+            proveedoresData.forEach((proveedor, index) => {
+                contenidoHtml += `<tr>
+                                    <td>${index + 1}</td>
+                                    <td>${proveedor.nombre}</td>
+                                    <td>${proveedor.cif}</td>
+                                    <td>${proveedor.direccion}</td>
+                                    <td>${proveedor.telefono}</td>
+                                    <td>${proveedor.email}</td>
+                                    <td><button class="btn btn-primary btn-sm" id="btn-edit-proveedor${proveedor.id_proveedor}" data-bs-toggle = "modal" data-bs-target="#modal${proveedor.id_proveedor}">Editar</button></td>
+                                    <td><button class="btn btn-danger btn-sm" onclick="eliminarProveedor('${proveedor.id_proveedor}')">Eliminar</button></td>
+                                </tr>`;
+                contenidoHtml += `
+                    <div class="modal fade" id="modal${proveedor.id_proveedor}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">${proveedor.nombre}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form id="formEditProveedor${proveedor.id_proveedor}">
+                                    <div class="modal-body">
+                                        <label>Nombre</label>
+                                        <input type="text" class="form-control mb-3" name="nombre" value="${proveedor.nombre}">
+                                        <label>CIF</label>
+                                        <input type="text" class="form-control mb-3" name="cif" value="${proveedor.cif}">
+                                        <label>Dirección</label>
+                                        <input type="text" class="form-control mb-3" name="direccion" value="${proveedor.direccion}">
+                                        <label>Teléfono</label>
+                                        <input type="text" class="form-control mb-3" name="telefono" value="${proveedor.telefono}">
+                                        <label>Email</label>
+                                        <input type="text" class="form-control mb-3" name="email" value="${proveedor.email}">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" id="btnGuardar${proveedor.id_proveedor}" class="btn btn-primary">Guardar cambios</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            return contenidoHtml;
+
+        }
+
+            function enviarDatosProveedor(idProveedor) {
+                console.log(idProveedor);
+                let form = document.getElementById("formEditProveedor2");
+                let formData = new FormData(form);
+                console.log('formData');
+                console.log(JSON.stringify(formData));
+                console.log(JSON.stringify(form));
+                fetch(`/edit_proveedor/${idProveedor}`, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Manejar la respuesta del servidor aquí
+                    console.log('Success:', data);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            }
+
+            document.getElementById("proveedor-tab").addEventListener("click", function() {
+                fetch('/proveedores')
+                    .then(response => response.json())
+                    .then(data => {
+                        let contenido = construirContenidoProveedores(data);
+                        document.getElementById("proveedor").innerHTML = contenido;
+
+                        // Agregar controladores de eventos para formularios AJAX
+                        data.forEach(proveedor => {
+                            let btnGuardar = document.getElementById(`btnGuardar${proveedor.id_proveedor}`);
+                            btnGuardar.addEventListener('click', function() {
+                                enviarDatosProveedor(proveedor.id_proveedor);
+                            });
+                        });
+                    })
+                    .catch(error => console.error('Error al cargar proveedores:', error));
+            });
+
+            function eliminarProveedor(idProveedor) {
+                if(confirm('¿Estás seguro de que deseas eliminar este proveedor?')) {
+                    fetch('/delete_proveedor/' + idProveedor, {
+                        method: 'POST'
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            alert('Proveedor eliminado correctamente');
+                            actualizarTablaProveedores();
+                        } else {
+                            alert('Error al eliminar el proveedor: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al eliminar el proveedor');
+                    });
+                }
+            }
+
+        });
+    </script>
+
+
+    
+        
+</body>
+</html>
